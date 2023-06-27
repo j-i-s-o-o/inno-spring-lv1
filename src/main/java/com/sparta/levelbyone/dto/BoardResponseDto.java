@@ -4,6 +4,8 @@ import com.sparta.levelbyone.entity.Board;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 public class BoardResponseDto {
@@ -13,6 +15,7 @@ public class BoardResponseDto {
     String username;
     String date;
     String contents;
+    LocalDateTime createdAt;
 
     public BoardResponseDto(Board board) {
 
@@ -20,6 +23,6 @@ public class BoardResponseDto {
         this.username = board.getUsername();
         this.title = board.getTitle();
         this.contents = board.getContents();
-        this.date = board.getCreatAt();
+        this.createdAt = board.getCreatedAt();
     }
 }

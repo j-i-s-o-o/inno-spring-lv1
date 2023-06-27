@@ -7,28 +7,29 @@ import com.sparta.levelbyone.dto.BoardResponseDeleteDto;
 import com.sparta.levelbyone.dto.BoardResponseDto;
 import com.sparta.levelbyone.entity.Board;
 import com.sparta.levelbyone.repository.BoardRepository;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j(topic = "Board Service")
+@Service
+@AllArgsConstructor
 public class BoardService {
 
-    List<Board> BoardList = new ArrayList<>();
-    BoardRepository boardRepository = new BoardRepository();
-
-    Long BoardID = 1L;
+    BoardRepository boardRepository;
 
     public List<BoardResponseDto> GetListBoard(){
-        return boardRepository.GetListBoard()
+        return boardRepository.findAllByOrderByCreatedAtDesc()
                 .stream().map(BoardResponseDto::new).toList();
     }
 
     public BoardResponseDto CreateBoard(BoardModifiedDto requestDto){
         log.error("Controller CreateBoard join " + requestDto.toString());
 
-        Board newBoard = new Board(BoardID++, requestDto);
+        Board newBoard = new Board(requestDto);
         log.error("Create Board " + newBoard.toString());
 
         log.error("Save Board");
@@ -45,7 +46,8 @@ public class BoardService {
 
         // DB에서 검색
         log.error("Repository Search Method");
-        Board returnBoard = boardRepository.findById(id);
+        Board returnBoard = boardRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException(("Not Find!")));
         log.error("result Data = " + returnBoard.toString());
 
         // 게시글 반환
@@ -53,13 +55,15 @@ public class BoardService {
         return new BoardResponseDto(returnBoard);
     }
 
+    @Transactional
     public BoardResponseDto SelectModifiedBoard(long id, BoardModifiedDto requestDto){
         // 선택한 게시글 수정
         log.error("Controller SelectModifiedBoard join");
 
         // DB에서 검색
         log.error("Search DB for id");
-        Board returnBoard = boardRepository.findById(id);
+        Board returnBoard = boardRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException(("Not Find!")));
         log.error("result Data = " + returnBoard.toString());
 
         if (returnBoard.getPassword().equals(requestDto.getPassword()))
@@ -69,7 +73,6 @@ public class BoardService {
                 returnBoard.updateTitle(requestDto.getTitle());
             if(!requestDto.getContents().isEmpty())
                 returnBoard.updateContents(requestDto.getContents());
-            returnBoard = boardRepository.update(returnBoard);
         }
         else
             return null;
@@ -81,13 +84,14 @@ public class BoardService {
     public BoardResponseDeleteDto SelectDeleteBoard(long id, BoardRequestDeleteDto requestDto){
         log.error("Controller SelectDeleteBoard join");
 
-        Board returnBoard = boardRepository.findById(id);
+        Board returnBoard = boardRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException(("Not Find!")));
         log.error("result Data = " + returnBoard.toString());
 
         BoardResponseDeleteDto response;
         if (returnBoard.getPassword().equals(requestDto.getPassword()))
         {
-            boardRepository.remove(returnBoard);
+            boardRepository.delete(returnBoard);
             response = new BoardResponseDeleteDto("삭제 됐어!!");
         }
         else

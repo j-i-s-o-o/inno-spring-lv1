@@ -1,22 +1,23 @@
 package com.sparta.levelbyone.Controller;
 
-import com.sparta.levelbyone.dto.BoardRequestDeleteDto;
 import com.sparta.levelbyone.dto.BoardModifiedDto;
+import com.sparta.levelbyone.dto.BoardRequestDeleteDto;
 import com.sparta.levelbyone.dto.BoardResponseDeleteDto;
 import com.sparta.levelbyone.dto.BoardResponseDto;
-import com.sparta.levelbyone.entity.Board;
+import com.sparta.levelbyone.repository.BoardRepository;
 import com.sparta.levelbyone.service.BoardService;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 @Slf4j(topic = "Controller Log")
 @RestController
+@AllArgsConstructor
 @RequestMapping("/api")
 public class BoardController {
 
-    BoardService boardService = new BoardService();
+    BoardService boardService;
 
     @GetMapping("/boards")
     public List<BoardResponseDto> GetListBoard(){
