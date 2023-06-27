@@ -10,4 +10,16 @@ public class BoardModifiedDto {
     String username;
     String password;
     String contents;
+
+    @Override
+    public String toString() {
+        return "BoardModifiedDto{" +
+                "title='" + title + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", contents='" + contents + '\'' +
+                '}';
+    }
 }
+
+
